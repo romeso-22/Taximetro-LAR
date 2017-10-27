@@ -1,15 +1,15 @@
-
+//Receptor de tarifa-emisor al módulo de audio
 #include <Wtv020sd16p.h>
 
-int resetPin = 4;  // The pin number of the reset pin.
-int clockPin = 5;  // The pin number of the clock pin.
-int dataPin = 6;  // The pin number of the data pin.
-int busyPin = 7;  // The pin number of the busy pin.
+int resetPin = 4;  // Pin reset modulo
+int clockPin = 5;  // Pin de clk del modulo 
+int dataPin = 6;  // Pin de datos del modulo 
+int busyPin = 7;  // Pin "busy" del modulo 
 
 Wtv020sd16p wtv020sd16p(resetPin,clockPin,dataPin,busyPin);
 
 void setup() {
-  //Initializes the module.
+  //Inicialización del modulo
   wtv020sd16p.reset();
   Serial.begin(9600);
 
@@ -18,10 +18,10 @@ void setup() {
 void loop() {
 
   
-  if(Serial.available() > 1) { // if two bytes have arrived
-    uint8_t MSB = Serial.read();
-    uint8_t LSB = Serial.read();
-    int numero = (MSB << 8) | LSB;
+  if(Serial.available() > 1) { // llegada de bytes
+    uint8_t MSB = Serial.read();//primero llega el MSB
+    uint8_t LSB = Serial.read();// segundo llega el LSB
+    int numero = (MSB << 8) | LSB;// acomodamos el "word" que ha llegado, aplicado un shift left de 8 bits y un or para acomodar los 2 bytes
     Serial.println(numero);
     delay(1500);
 
