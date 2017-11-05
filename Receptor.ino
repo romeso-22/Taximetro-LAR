@@ -83,7 +83,7 @@ int voz4;
    
   }
 
-   /*switch (centenas) {
+   switch (centenas) {
      case 0:
       voz3 = 44;
       break;
@@ -267,7 +267,7 @@ int voz4;
 
    wtv020sd16p.playVoice(voz1);
    wtv020sd16p.playVoice(voz2);
-   wtv020sd16p.playVoice(voz3);*/
+   wtv020sd16p.playVoice(voz3);
    wtv020sd16p.playVoice(voz4);
   
 }}//loop
