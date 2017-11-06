@@ -7,7 +7,7 @@ int digit2 = 12; //Pin 2
 //int digit3 = 9; //Pin 6 
 //int digit4 = 6; //Pin8 
 //int digit5 = 13;// Pin 1 del display 
-int tipo_tarifa = 5;
+int tipo_tarifa = 1;
 long T0=0;
 int segA = A1; //Pin 14 
 int segB = 3; //Pin 16 
@@ -49,8 +49,9 @@ int inboton;
       pinMode (ledlibre, OUTPUT);
       pinMode(ledocupado, OUTPUT);
       pinMode (go_stop, INPUT); //Entrada del boton de inicio/final
-attachInterrupt(0, detectapulso, FALLING);
-        
+    attachInterrupt(0, detectapulso, FALLING);
+          digitalWrite(ledlibre, HIGH);
+    digitalWrite(ledocupado, LOW);
           }
 
      void loop()
@@ -115,7 +116,11 @@ void cuentaboton(){ // cada vez que se toca el boton de inicio o el de parada, a
         usuario = 5;
         break;
       default:
-      usuario = 0;
+        if (user!= 213||user!= 233||user!= 323||user!= 122||user!= 113){
+            usuario = 8;
+          }
+        if (largo<3 )
+          usuario = 0;
         }
       return usuario;
     }
@@ -218,6 +223,15 @@ void imprime(int num){
         digitalWrite(segF, SEGMENT_ON);
         digitalWrite(segG, SEGMENT_ON);
         break;
+      case 8:
+        digitalWrite(segA, SEGMENT_OFF);
+        digitalWrite(segB, SEGMENT_OFF);
+        digitalWrite(segC, SEGMENT_OFF);
+        digitalWrite(segD, SEGMENT_OFF);
+        digitalWrite(segE, SEGMENT_OFF);
+        digitalWrite(segF, SEGMENT_OFF);
+        digitalWrite(segG, SEGMENT_ON);
+        break;
       case 10:
         // turn all the LEDs off:
         digitalWrite(segA, SEGMENT_OFF);
@@ -227,7 +241,7 @@ void imprime(int num){
         digitalWrite(segE, SEGMENT_OFF);
         digitalWrite(segF, SEGMENT_OFF);
         digitalWrite(segG, SEGMENT_OFF);
-        
+
     }
   }
 
