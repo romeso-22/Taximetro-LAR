@@ -1,29 +1,62 @@
-//Receptor de tarifa-emisor al módulo de audio
+#include "SoftwareSerial.h"
 #include <Wtv020sd16p.h>
+#include "Adafruit_Thermal.h"
 
-int resetPin = 4;  // Pin reset modulo
-int clockPin = 5;  // Pin de clk del modulo 
-int dataPin = 6;  // Pin de datos del modulo 
-int busyPin = 7;  // Pin "busy" del modulo 
+#include "SoftwareSerial.h"
+#define TX_PIN 10 // era 6 rx d la impr
+#define RX_PIN 11 // era 5 tx de la imp
+
+SoftwareSerial mySerial(RX_PIN, TX_PIN); // Declare SoftwareSerial obj first
+Adafruit_Thermal printer(&mySerial);     // Pass addr to printer constructor
+// Then see setup() function regarding serial & printer begin() calls.
+
+int voz1;
+int voz2;
+int voz3;
+int voz4;
+int resetPin = 9;  // The pin number of the reset pin.
+int clockPin = 5;  // The pin number of the clock pin.
+int dataPin = 6;  // The pin number of the data pin.
+int busyPin = 7;  // The pin number of the busy pin.
 
 Wtv020sd16p wtv020sd16p(resetPin,clockPin,dataPin,busyPin);
+//SoftwareSerial  mySerial(RX_PIN, TX_PIN); // Declare SoftwareSerial obj first
+//Adafruit_Thermal printer(&mySerial);     // Pass addr to printer constructor
+// Then see setup() function regarding serial & printer begin() calls.
 
 void setup() {
-  //Inicialización del modulo
+   mySerial.begin(9600);  // Initialize SoftwareSerial
+  printer.begin();        // Inicia la impresora
+  //Initializes the module audio
   wtv020sd16p.reset();
   Serial.begin(9600);
 
+  ////impresora
+  // This line is for compatibility with the Adafruit IotP project pack,
+  // which uses pin 7 as a spare grounding point.  You only need this if
+  // wired up the same way (w/3-pin header into pins 5/6/7):
+  pinMode(7, OUTPUT); digitalWrite(7, LOW);
+
+//  mySerial.begin(9600);  // Initialize SoftwareSerial
+//  printer.begin();        // Inicia la impresora
+    
 }
-
-void loop() {
-
+  void loop() {
   
-  if(Serial.available() > 1) { // llegada de bytes
-    uint8_t MSB = Serial.read();//primero llega el MSB
-    uint8_t LSB = Serial.read();// segundo llega el LSB
-    int numero = (MSB << 8) | LSB;// acomodamos el "word" que ha llegado, aplicado un shift left de 8 bits y un or para acomodar los 2 bytes
+   if(Serial.available() > 1) { // if two bytes have arrived
+    uint8_t MSB = Serial.read();
+    uint8_t LSB = Serial.read();
+    int numero = (MSB << 8) | LSB;
     Serial.println(numero);
     delay(1500);
+  seleccion_audio(numero);
+    }
+}//aqui termina loop
+
+
+
+int seleccion_audio(int numero){
+  
 
   int DUmillar = numero/ 1000;
   int decmillar = numero/10000;
@@ -38,12 +71,6 @@ void loop() {
   Serial.println(decenas);
  // Serial.println(unidades);
 //delay(1500);
-
-
-//int voz1;
-//int voz2;
-//int voz3;
-int voz4;
 
 
     switch (decenas) {
@@ -82,8 +109,7 @@ int voz4;
     break;
    
   }
-
-   switch (centenas) {
+switch (centenas) {
      case 0:
       voz3 = 44;
       break;
@@ -156,11 +182,11 @@ int voz4;
       voz1 = 7;
       voz2 = 1000;
       break;
-    case 08:
+    case 8:
       voz1 = 8;
       voz2 = 1000;
       break;
-    case 09:
+    case 9:
       voz1 = 9;
       voz2 = 1000;
       break;
@@ -256,18 +282,41 @@ int voz4;
       voz1 = 44;
       voz2 = 44;
       break;
-  }//switch
+  }//aqui termina switch
   
-  }//if
+  //aqui termina if
  
  // playvoice(miles) voz1
  // playvoice "mil" voz2
  // playvoice centenas voz3
  // playvoice decenas voz4
-
-   wtv020sd16p.playVoice(voz1);
-   wtv020sd16p.playVoice(voz2);
-   wtv020sd16p.playVoice(voz3);
-   wtv020sd16p.playVoice(voz4);
+  printer.wake(); 
+  printer.boldOn();
+  printer.feed(1);
+  printer.println(F(" "));
+  printer.println(F("____________"));
+  printer.println(F("Te quiero mucho mi amor"));
+  printer.justify('L');
+  printer.println(F("El proyecto ya sirve!!!"));
+  printer.println(F("Nos felicito porque lo logramos :D"));
+  printer.print(F("(Sin Luis)"));
   
-}}//loop
+ // printer.print(numero);
+  printer.print(F("<3 "));
+  printer.feed(2);
+  printer.boldOff();
+  printer.sleep();      // Apagado de impresero
+  //printer.wake();       // Encendido de impresora para imprimir de nuevo
+  //printer.setDefault(); // Reset de configuración
+  
+   wtv020sd16p.playVoice(voz1);
+   delay(1000);
+   wtv020sd16p.playVoice(voz2);
+   delay(500);
+   wtv020sd16p.playVoice(voz3);
+   delay(1000);
+   wtv020sd16p.playVoice(voz4);
+   delay(1000);
+   
+  
+}
