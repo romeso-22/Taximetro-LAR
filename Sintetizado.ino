@@ -1,25 +1,34 @@
-/* Multiplexación para dos displays de 4 dígitos cada uno, funcionando con 5 dígitos en total */
-
-
+ 
+//constantes de contador y tiempos
 unsigned long previo=0;
 unsigned long previo2=0;
 volatile int contador = 0;   // Variable contador de pulsos
 long n = contador ;
 long T0 = 0 ;  // Variable global para tiempo
-int clk_carro=A2;// pin de entrada del reloj del carro
-int t_espera = 5000;
-int estado=0;
-int tarifa_basica = 690;
+long T1=0;
+int clk_carro = A4;// pin de entrada del reloj del carro
+//constantes para modificar y adaptar el auto
+int t_espera = 1300;
+float tarifa_extra=610;
+int tarifa_basica = 640;
+int estado=1;
+int pulsoskm = 500;// pulsos que se dan por kilometro (deben ser medidos)
+float otr= tarifa_extra/pulsoskm;//ajute de precio por pulos
+int cte = (10/otr);//ajuste de precio por pulso
+long tiempo_de_viaje;
 
-int digit1 = 11; //Pin 1 del display 
+
+
+
+//Constantes para displyas
+int digit1 = A2; //Pin 1 del display cambie eagle era un 11
 int digit2 = 10; //Pin 2 
-int digit3 = 9; //Pin 6 
-int digit4 = 6; //Pin8 
-int digit5 = 13;// Pin 1 del display 
-//Pinout para arduino UNO
-
+int digit3 = 6; //Pin 6 cambiados era 6 es 12 en eagle
+int digit4 = 9; //Pin8  cambiados era 9 es 15 en eagle
+int digit5 = A3;// Pin 1 del display cambie eagle era un 13
+//Pinout de arduino
 int segA = A1; //Pin 14 
-int segB = 3; //Pin 16 
+int segB = A5; //Pin 16 
 int segC = 4; //Pin 13 
 int segD = 5; //Pin 3 
 int segE = A0; //Pin 5 
@@ -30,7 +39,7 @@ void setup() {
 pinMode(2, INPUT);
 pinMode(A2, INPUT);
 attachInterrupt( 0, Conteo, FALLING);//interrupcion (pulso del carro)
-//attachInterrupt( 1, Over, FALLING);//interrupcion (pulso del carro)
+attachInterrupt( 1, Over, FALLING);//interrupcion inicio/fin
 
   //Asignación de salidas, segmentos y dígitos correspondientes
   Serial.begin(9600);  
@@ -47,34 +56,46 @@ attachInterrupt( 0, Conteo, FALLING);//interrupcion (pulso del carro)
   pinMode(digit3, OUTPUT);
   pinMode(digit4, OUTPUT); 
   pinMode(digit5, OUTPUT);
-  
+Serial.println(otr);
+Serial.println(cte);
 }
 //Si hay datos en el puerto serial, los lee guarda en una variable (tarifa) y llama a la funcion de impresión en el display
-void loop() {
-  RecorridoExtra();
-long  pago=tarifa(contador);
-  displayNumber(pago);
- // llegada();
+void loop() { 
+ if(estado%2==0){ 
+ //tiempo_de_viaje= millis(); 
+ RecorridoExtra();
+ long  pago=tarifa(contador);
+ displayNumber(pago);
+ }
+ else{
+  tiempo_de_viaje=0;
+  contador=0;
+  displayNumber(0);
+  }
 }
 
-
- /*void Over(){
-  
-  if(estado%2==0){// para iniciar el viaje
-  contador=0;
-  estado++;
-  }
-  else{}// para parar el viaje
-  byte LSB = contador;  
-  byte MSB = contador >> 8;
-  Serial.write(MSB);
+ void Over(){
+   if ( millis() > T1  + 250)
+         {
+          estado++;        
+          if(estado%2!=0){
+            long  pago=tarifa(contador);
+  uint8_t LSB = pago;  
+ uint8_t MSB = pago >> 8;
+  //Serial.println(pago);
+ Serial.write(MSB);
   Serial.write(LSB);
-  estado++;
-  }
-*/
+
+
+  
+            }
+          } 
+          T1 = millis();
+          }
+  
+ 
+
 void RecorridoExtra(){
- // Serial.println(contador);
-  //Serial.write(contador);//imprimimos tarifa
   unsigned long actual=millis();
    if (n != contador)// si la tarifa ha cambiado, se imprime
            {  // Serial.println(contador);// imprimimos la tarifa
@@ -90,11 +111,11 @@ void RecorridoExtra(){
 
 int tarifa(long cuenta){
   int factura;
-    if(cuenta <= 1000){
-      factura=tarifa_basica ;
+    if(cuenta <= pulsoskm){// si ha recorrido menos de un kilometro
+      factura=tarifa_basica ;//imprime solo tarifa basica
       }
-  if(cuenta>1000){
-    factura=tarifa_basica +(cuenta-1000);
+  if(cuenta>pulsoskm){
+    factura=tarifa_basica +(10*((cuenta-pulsoskm)/cte));// si ha recorrido más de un kilometro imprime la basica más el ajuste  (algoritmo)    
     }
   return factura;
   }  
@@ -275,4 +296,3 @@ void lightNumber(int numberToDisplay) {// funcion que asigna los segmentos corre
     break;
   }
 }
-
