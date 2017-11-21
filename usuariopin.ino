@@ -2,26 +2,23 @@
 String pin;
 int usuario;
 int user;
-int digit1 = 11; //Pin 1 del display 
-int digit2 = 12; //Pin 2 
-//int digit3 = 9; //Pin 6 
-//int digit4 = 6; //Pin8 
-//int digit5 = 13;// Pin 1 del display 
-int tipo_tarifa = 1;
-long T0=0;
-int segA = A1; //Pin 14 
-int segB = 3; //Pin 16 
-int segC = 4; //Pin 13 
-int segD = 5; //Pin 3 
-int segE = A0; //Pin 5 
-int segF = A2; //Pin 11 
-int segG = A3; //Pin 15 
+int digit1 = A3; //Pin 1 del display. Eagle pin 17
+int digit2 = A2; //Pin 2. Eagle pin 18
+int tipo_tarifa = 1; // Eagle pin 3
+long T0;
+int segA = 9; //Pin 14. Eagle pin 24
+int segB = 10; //Pin 16 . Eagle pin 5
+int segC = 11; //Pin 13 . Eagle pin 6
+int segD = 12; //Pin 3 . Eagle pin 11
+int segE = 13; //Pin 5 . Eagle pin 23
+int segF = A0; //Pin 11 . Eagle pin 25
+int segG = A1; //Pin 15 . Eagle pin 26
 int inboton;
-     const byte Filas = 3;          //3 filas
+     const byte Filas = 3;          //3 filas. 
      const byte Cols = 1;           //1 columnas
 
-     byte Pins_Filas[] = {7, 8, 9};     //Pines Arduino para las filas
-     byte Pins_Cols[] = {10};     // Pines Arduinopara las columnas
+     byte Pins_Filas[] = {7, 6, 5};     //Pines Arduino para las filas. Eagle pin  (11), 14(12), 15(13)
+     byte Pins_Cols[] = {8};     // Pines Arduinopara las columnas. Eagle pin 16(10)
      char Teclas [ Filas ][ Cols ] = // mapeo
           {
               {'1'},
@@ -30,11 +27,10 @@ int inboton;
           };
           // mapeo de teclado matricial
      Keypad Teclado1 = Keypad(makeKeymap(Teclas), Pins_Filas, Pins_Cols, Filas, Cols);
-   int ledlibre = A4;
-   int ledocupado = A5;  
-   int go_stop=13;
+   int ledlibre = A4; // Eagle pin 27
+   int ledocupado = A5; // Eagle pin 28
      void setup()
-        {             
+        {              
           Serial.begin(9600) ; 
         pinMode(segA, OUTPUT);
         pinMode(segB, OUTPUT);
@@ -48,8 +44,7 @@ int inboton;
       pinMode(digit2, OUTPUT);
       pinMode (ledlibre, OUTPUT);
       pinMode(ledocupado, OUTPUT);
-      pinMode (go_stop, INPUT); //Entrada del boton de inicio/final
-    attachInterrupt(0, detectapulso, FALLING);
+      attachInterrupt(0, detectapulso, FALLING); // Eagle pin 4  //Entrada del boton de inicio/final (PIN D2)
           digitalWrite(ledlibre, HIGH);
     digitalWrite(ledocupado, LOW);
           }
