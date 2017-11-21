@@ -6,7 +6,7 @@ volatile int contador = 0;   // Variable contador de pulsos
 long n = contador ;
 long T0 = 0 ;  // Variable global para tiempo
 long T1=0;
-int clk_carro = A4;// pin de entrada del reloj del carro
+int clk_carro = 4;// pin de entrada del reloj del carro
 //constantes para modificar y adaptar el auto
 int t_espera = 1300;
 float tarifa_extra=610;
@@ -21,23 +21,23 @@ long tiempo_de_viaje;
 
 
 //Constantes para displyas
-int digit1 = A2; //Pin 1 del display cambie eagle era un 11
-int digit2 = 10; //Pin 2 
-int digit3 = 6; //Pin 6 cambiados era 6 es 12 en eagle
+int digit1 = 12; //Pin 1 del display cambie eagle era un 11
+int digit2 = 11; //Pin 2 
+int digit3 = 10; //Pin 6 cambiados era 6 es 12 en eagle
 int digit4 = 9; //Pin8  cambiados era 9 es 15 en eagle
-int digit5 = A3;// Pin 1 del display cambie eagle era un 13
+int digit5 = 8;// Pin 1 del display cambie eagle era un 13
 //Pinout de arduino
 int segA = A1; //Pin 14 
-int segB = A5; //Pin 16 
-int segC = 4; //Pin 13 
-int segD = 5; //Pin 3 
-int segE = A0; //Pin 5 
-int segF = 7; //Pin 11 
-int segG = 8; //Pin 15 
+int segB = 13; //Pin 16 
+int segC = A2; //Pin 13 
+int segD = A3; //Pin 3 
+int segE = A5; //Pin 5 
+int segF = A4; //Pin 11 
+int segG = A0; //Pin 15 
 //String tarifa;
 void setup() { 
 pinMode(2, INPUT);
-pinMode(A2, INPUT);
+pinMode(clk_carro, INPUT);
 attachInterrupt( 0, Conteo, FALLING);//interrupcion (pulso del carro)
 attachInterrupt( 1, Over, FALLING);//interrupcion inicio/fin
 
