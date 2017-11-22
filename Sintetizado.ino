@@ -32,7 +32,7 @@ int segB = 13; //Pin 16
 int segC = A2; //Pin 13 
 int segD = A3; //Pin 3 
 int segE = A5; //Pin 5 
-int segF = A4; //Pin 11 
+int segF = A2; //Pin 11 
 int segG = A0; //Pin 15 
 //String tarifa;
 void setup() { 
